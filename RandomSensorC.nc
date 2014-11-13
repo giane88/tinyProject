@@ -36,6 +36,6 @@ implementation {
     components new RandomReaderC();
     components RandomC;
 
-    Read = RandomSensorC;
-    RandomSensorC.Random -> RandomC;
+    Read = RandomReaderC;
+    RandomReaderC.Random -> RandomC;
 }

@@ -1,4 +1,4 @@
-generic module RandomSensorC()
+generic module RandomReader()
 {
   provides interface Read<uint16_t>;
   uses interface Random;

@@ -14,7 +14,6 @@ implementation
     components ActiveMessageC;
     components new AMSenderC(AM_RADIO);
     components new AMReceiverC(AM_RADIO);
-    components SplitControl as AMControl;
     components RandomC;
 
     SensorC.Boot -> MainC;
