@@ -6,13 +6,13 @@ enum {
   SAMPLING_FREQ = 5120,
   SINK_FREQ = 10240,
   DELAY_BASE = 1024,
-  N_MOTES = 20,
+  N_MOTES = 10,
   N_SAMPLE = 6
 };
 
 typedef nx_struct SensorMsg {
     nx_uint16_t nodeid;
-    nx_uint16_t avg;
+    nx_uint32_t avg;
 } SensorMsg;
 
 typedef nx_struct RequestMsg {

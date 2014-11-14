@@ -68,8 +68,9 @@ implementation
     {
         if(result == SUCCESS) {
             temp[index] = data;
+	    dbg("sensor", "%s | [NODE %d] Letto il valore temp[%d]=%d\n",sim_time_string(),TOS_NODE_ID, index, temp[index]);
             if(index >= (N_SAMPLE - 1)) {
-                index == 0;
+                index = 0;
             } else {
                 index++;
             }                
@@ -77,19 +78,21 @@ implementation
     }
     
     float calcAvg() {
-      float sum;
+      float sum = 0;
       uint8_t i;
       
       for (i = 0; i < N_SAMPLE; i++) {
-	sum += temp[i];
+	    sum += temp[i];
       }
-      return (sum/N_SAMPLE);
+      sum = sum/N_SAMPLE;
+      dbg("sensor","%s | [NODE %d] Calcolo la temperatura media %f\n", sim_time_string(), TOS_NODE_ID, sum);
+      return sum;
     }      
     
     task void replayMsg() 
     {
         uint32_t tempavg;
-        tempavg = calcAvg();
+        *(float*)&tempavg = calcAvg();
         //Invio del messaggio.
         if(!busy) {
             SensorMsg* senpkt = (SensorMsg*)(call Packet.getPayload(&pkt, sizeof(SensorMsg)));
@@ -98,8 +101,7 @@ implementation
             senpkt->avg = tempavg;
             if( call AMSend.send(sourceAddr, &pkt, sizeof(SensorMsg)) == SUCCESS) {
                 busy = TRUE;
-                dbg("default", "%s | Sent avg temp = %f from %d",sim_time_string(), tempavg, TOS_NODE_ID);
-            }
+	    }
         }
     }
 
@@ -119,15 +121,15 @@ implementation
             reqid++;
             reqpkt -> requestid = reqid;
             if (broadcast()) {
-                dbg("default", "%s | [SINK] sending request message to BROADCAST",sim_time_string());
+                dbg("default", "%s | [SINK] sending request message to BROADCAST\n",sim_time_string());
                 if (call AMSend.send(AM_BROADCAST_ADDR, &pkt, sizeof(RequestMsg)) == SUCCESS) {
-                    busy == TRUE;
+                    busy = TRUE;
                 }
             } else {
 	        nodeid = ((call Random.rand16() % (N_MOTES -1)) + 1);
-                dbg("default", "%s | [SINK] sending request message to %d",sim_time_string(),nodeid);
+                dbg("default", "%s | [SINK] sending request message to %d\n",sim_time_string(),nodeid);
                 if (call AMSend.send(nodeid, &pkt, sizeof(RequestMsg)) == SUCCESS) {
-                    busy == TRUE;
+                    busy = TRUE;
                 }
             }
         }
@@ -145,15 +147,20 @@ implementation
             destAddr = call AMPacket.destination(msg);
             if(destAddr == TOS_BCAST_ADDR){
 	        call DelayTimer.startOneShot(call Random.rand16() % DELAY_BASE);
+                dbg("default","%s | [NODE %d] Recived command from %d id = %d, sending the avg temperature\n", sim_time_string(), TOS_NODE_ID, sourceAddr,reqpkt->requestid);
             } else {
                 post replayMsg();
-                dbg("default","%s | Node %d: Recived command from %d id = %d, sending the avg temperature", sim_time_string(), TOS_NODE_ID, sourceAddr,reqpkt->requestid);
+                dbg("default","%s | [NODE %d] Recived command from %d id = %d, sending the avg temperature\n", sim_time_string(), TOS_NODE_ID, sourceAddr,reqpkt->requestid);
             }
         }
 	if (len == sizeof(SensorMsg)) {
+	  uint32_t value;
+	  float tmp;
 	  SensorMsg* senmsg = (SensorMsg*) payload;
+	  value = senmsg->avg;
+	  tmp = *(float*)&value;
 	  sourceAddr = call AMPacket.source(msg);
-	  dbg("default", "%s | [Sink] Receive temperature from %d the value is %f", sim_time_string(), senmsg->nodeid, senmsg->avg);
+	  dbg("default", "%s | [SINK] Receive temperature from %d the value is %f\n", sim_time_string(), senmsg->nodeid, tmp);
 	}
         return msg;
     }

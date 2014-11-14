@@ -1,4 +1,4 @@
-generic module RandomReader()
+generic module RandomReaderC()
 {
   provides interface Read<uint16_t>;
   uses interface Random;

@@ -4,7 +4,7 @@
 
 PATH_LOSS_EXPONENT = 4.7; 
 SHADOWING_STANDARD_DEVIATION = 3.2; 
-D0 = 1.0; 
+D0 = 0.3; 
 PL_D0 = 55.4; 
 
 %%%%%%%%%%%%%%%%%%%%%% 
@@ -37,9 +37,9 @@ WHITE_GAUSSIAN_NOISE = 4;
 % - FILE (4) 
 
 TOPOLOGY = 1; 
-NUMBER_OF_NODES = 225; 
+NUMBER_OF_NODES = 16; 
 
-GRID_UNIT = 1.0; 
+GRID_UNIT = 0.5; 
 
 TOPOLOGY_FILE = topology; 
 
