@@ -21,7 +21,6 @@ for channel in DBG_CHANNELS.split():
     t.addChannel(channel, sys.stdout)
     t.addChannel("sensor", fs)
 
-
 #add gain links
 f = open(TOPO_FILE, "r")
 lines = f.readlines()
@@ -44,8 +43,13 @@ for line in lines:
         for i in range(0, N_MOTES):
             t.getNode(i).addNoiseTraceReading(val)
 
+time=30 * t.ticksPerSecond()
+m=t.getNode(0)
+m.bootAtTime(time)
+m.createNoiseModel()
+print "Booting 0 at ~ ", time*1000/t.ticksPerSecond(), "ms"
 
-for i in range (0, N_MOTES):
+for i in range (1, N_MOTES):
     time=i * t.ticksPerSecond() / 100
     m=t.getNode(i)
     m.bootAtTime(time)

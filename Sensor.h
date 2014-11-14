@@ -4,7 +4,7 @@
 enum {
   AM_RADIO = 6,
   SAMPLING_FREQ = 5120,
-  SINK_FREQ = 10240,
+  SINK_FREQ = 1024,
   DELAY_BASE = 1024,
   N_MOTES = 10,
   N_SAMPLE = 6
